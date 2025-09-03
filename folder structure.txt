@@ -1,0 +1,17 @@
+ewaste-backend/
+│── src/
+│   ├── config/            # DB, Redis, Cloudinary, env
+│   ├── controllers/       # Request handlers
+│   ├── middleware/        # Auth, validation, error handling
+│   ├── models/            # MongoDB schemas
+│   ├── routes/            # API endpoints
+│   ├── services/          # Business logic (AI, payments, caching)
+│   ├── utils/             # Helpers (logger, email, SMS)
+│   ├── jobs/              # Redis/BullMQ background jobs
+│   └── app.ts             # Express app
+│
+├── ecosystem.config.js    # PM2 config
+├── tsconfig.json
+├── package.json
+├── .env
+└── README.md

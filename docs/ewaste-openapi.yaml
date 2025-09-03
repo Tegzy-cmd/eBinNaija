@@ -1,0 +1,301 @@
+openapi: 3.0.0
+info:
+  title: eWaste Recycling API
+  description: API for managing eWaste pickups, collectors, recyclers, rewards, and admin dashboards.
+  version: 1.0.0
+servers:
+  - url: https://api.ewaste.com/v1
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [user, collector, recycler, admin] }
+        walletBalance: { type: number }
+    Pickup:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        collectorId: { type: string }
+        wasteImage: { type: string }
+        wasteType: { type: string }
+        status: { type: string, enum: [requested, accepted, enroute, delivered, processed] }
+    Transaction:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string, enum: [credit, debit] }
+        amount: { type: number }
+        status: { type: string, enum: [pending, completed, failed] }
+        reference: { type: string }
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                role: { type: string, enum: [user, collector, recycler] }
+                phone: { type: string }
+      responses:
+        "200":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /auth/login:
+    post:
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+
+  /auth/me:
+    get:
+      summary: Get logged in user profile
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /pickups:
+    post:
+      summary: Create pickup request
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                wasteImage:
+                  type: string
+                  format: binary
+                location:
+                  type: object
+                  properties:
+                    coordinates:
+                      type: array
+                      items: { type: number }
+      responses:
+        "200":
+          description: Pickup created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pickup"
+    get:
+      summary: List pickups for user/collector
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of pickups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pickup"
+
+  /pickups/{id}:
+    patch:
+      summary: Update pickup status
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+      responses:
+        "200":
+          description: Updated pickup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pickup"
+
+  /collectors/jobs:
+    get:
+      summary: List available pickups for collectors
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Nearby jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pickup"
+
+  /collectors/jobs/{id}/complete:
+    patch:
+      summary: Complete a pickup with proof
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                proofImage:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Completed pickup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pickup"
+
+  /recycling/deliveries:
+    get:
+      summary: View delivered pickups for recyclers
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Deliveries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pickup"
+
+  /recycling/{id}/process:
+    patch:
+      summary: Process a pickup and issue reward
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Processed pickup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pickup"
+
+  /wallet:
+    get:
+      summary: Get wallet balance & transactions
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Wallet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance: { type: number }
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+
+  /wallet/redeem:
+    post:
+      summary: Redeem wallet balance
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount: { type: number }
+      responses:
+        "200":
+          description: Redeem success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  reference: { type: string }
+
+  /admin/overview:
+    get:
+      summary: Get admin dashboard data
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Admin overview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users: { type: integer }
+                  pickups: { type: integer }
+                  wasteProcessed: { type: string }
+                  rewardsIssued: { type: number }
