@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "user" | "collector" | "recycler" | "admin";
+  role: 'user' | 'collector' | 'recycler' | 'admin';
   verified: boolean;
   phone?: string;
   profileImage?: string;
@@ -17,7 +17,7 @@ const userSchema = new Schema<IUser>(
     verified: { type: Boolean, default: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["user", "collector", "recycler", "admin"], default: "user" },
+    role: { type: String, enum: ['user', 'collector', 'recycler', 'admin'], default: 'user' },
     phone: String,
     profileImage: String,
     walletBalance: { type: Number, default: 0 },
@@ -25,4 +25,4 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-export default mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser>('User', userSchema);

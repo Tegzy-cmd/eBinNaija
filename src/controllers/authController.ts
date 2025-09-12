@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import redis from "../config/redis";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/user";
-import { sendEmail } from "../utils/email";
-import { v4 as uuidv4 } from "uuid";
+import { Request, Response } from 'express';
+import redis from '../config/redis';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/user';
+import { sendEmail } from '../utils/email';
+import { v4 as uuidv4 } from 'uuid';
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
 // REGISTER
 export const register = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const register = async (req: Request, res: Response) => {
 
     // Check if email exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email already registered" });
+    if (existingUser) return res.status(400).json({ message: 'Email already registered' });
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,13 +25,13 @@ export const register = async (req: Request, res: Response) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "user",
+      role: role || 'user',
     });
 
-    return res.status(201).json({ message: "User registered successfully", user });
+    return res.status(201).json({ message: 'User registered successfully', user });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -42,19 +42,19 @@ export const login = async (req: Request, res: Response) => {
 
     // Find user
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     // Generate token
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
-    return res.json({ message: "Login successful", token });
+    return res.json({ message: 'Login successful', token });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -63,19 +63,19 @@ export const sendVerification = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (user.verified) return res.json({ message: "Already verified" });
+    if (user.verified) return res.json({ message: 'Already verified' });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-    await redis.set(`verify:${email}`, otp, "EX", 600); // expires in 10 min
+    await redis.set(`verify:${email}`, otp, 'EX', 600); // expires in 10 min
 
-    await sendEmail(email, "Verify your eWaste account", `Your OTP is ${otp}`);
+    await sendEmail(email, 'Verify your eWaste account', `Your OTP is ${otp}`);
 
-    return res.json({ message: "Verification OTP sent" });
+    return res.json({ message: 'Verification OTP sent' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -86,16 +86,16 @@ export const verifyEmail = async (req: Request, res: Response) => {
     const storedOtp = await redis.get(`verify:${email}`);
 
     if (!storedOtp || storedOtp !== otp) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
     await User.updateOne({ email }, { verified: true });
     await redis.del(`verify:${email}`);
 
-    return res.json({ message: "Email verified successfully" });
+    return res.json({ message: 'Email verified successfully' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -103,14 +103,14 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const me = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select('-password');
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     return res.json(user);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -119,18 +119,18 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     const token = uuidv4();
-    await redis.set(`reset:${token}`, (user as { _id: any })._id.toString(), "EX", 3600); // 1 hour
+    await redis.set(`reset:${token}`, (user as { _id: any })._id.toString(), 'EX', 3600); // 1 hour
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
-    await sendEmail(email, "Password Reset", `Click here to reset your password: ${resetLink}`);
+    await sendEmail(email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
 
-    return res.json({ message: "Password reset link sent" });
+    return res.json({ message: 'Password reset link sent' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -140,36 +140,36 @@ export const resetPassword = async (req: Request, res: Response) => {
     const { token, newPassword } = req.body;
     const userId = await redis.get(`reset:${token}`);
 
-    if (!userId) return res.status(400).json({ message: "Invalid or expired token" });
+    if (!userId) return res.status(400).json({ message: 'Invalid or expired token' });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await User.findByIdAndUpdate(userId, { password: hashedPassword });
 
     await redis.del(`reset:${token}`);
 
-    return res.json({ message: "Password reset successful" });
+    return res.json({ message: 'Password reset successful' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
 // LOGOUT
 export const logout = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(400).json({ message: "No token provided" });
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(400).json({ message: 'No token provided' });
 
     // Decode token to get expiry
     const decoded = jwt.decode(token) as { exp?: number };
     const expiry = decoded?.exp ? decoded.exp - Math.floor(Date.now() / 1000) : 3600; // fallback 1h
 
     // Save to Redis blacklist
-    await redis.set(`bl_${token}`, "true", "EX", expiry);
+    await redis.set(`bl_${token}`, 'true', 'EX', expiry);
 
-    return res.json({ message: "Logout successful" });
+    return res.json({ message: 'Logout successful' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: 'Server error' });
   }
 };

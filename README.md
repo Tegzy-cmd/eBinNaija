@@ -46,22 +46,21 @@ It connects **citizens (waste generators)**, **collectors (pickup agents)**, and
 ---
 
 ## 📂 Project Structure
-
 ```
 
 ewaste-backend/
 │── src/
-│   ├── config/            # DB, Redis, Cloudinary, env
-│   ├── controllers/       # Request handlers
-│   ├── middleware/        # Auth, validation, error handling
-│   ├── models/            # MongoDB schemas
-│   ├── routes/            # API endpoints
-│   ├── services/          # Business logic (AI, payments, caching)
-│   ├── utils/             # Helpers (logger, email, SMS)
-│   ├── jobs/              # Redis/BullMQ background jobs
-│   └── app.ts             # Express app
+│ ├── config/ # DB, Redis, Cloudinary, env
+│ ├── controllers/ # Request handlers
+│ ├── middleware/ # Auth, validation, error handling
+│ ├── models/ # MongoDB schemas
+│ ├── routes/ # API endpoints
+│ ├── services/ # Business logic (AI, payments, caching)
+│ ├── utils/ # Helpers (logger, email, SMS)
+│ ├── jobs/ # Redis/BullMQ background jobs
+│ └── app.ts # Express app
 │
-├── ecosystem.config.js    # PM2 config
+├── ecosystem.config.js # PM2 config
 ├── tsconfig.json
 ├── package.json
 ├── .env
@@ -125,8 +124,8 @@ pm2 start ecosystem.config.js
 
 The API is documented using **OpenAPI/Swagger**.
 
-* Import [`ewaste-openapi.yaml`](./ewaste-openapi.yaml) into [Swagger Editor](https://editor.swagger.io) or Postman.
-* Optional: Serve docs at `/docs` using Swagger UI.
+- Import [`ewaste-openapi.yaml`](./ewaste-openapi.yaml) into [Swagger Editor](https://editor.swagger.io) or Postman.
+- Optional: Serve docs at `/docs` using Swagger UI.
 
 ---
 
@@ -140,12 +139,12 @@ npm run test
 
 ## 📌 Roadmap
 
-* [x] Authentication (Register, Login, Logout, Profile)
-* [x] Email Verification & Password Reset
-* [ ] Pickup & Job Management
-* [ ] AI Waste Classification Service
-* [ ] Wallet & Rewards Integration
-* [ ] Admin Dashboard APIs
+- [x] Authentication (Register, Login, Logout, Profile)
+- [x] Email Verification & Password Reset
+- [ ] Pickup & Job Management
+- [ ] AI Waste Classification Service
+- [ ] Wallet & Rewards Integration
+- [ ] Admin Dashboard APIs
 
 ---
 
@@ -164,4 +163,3 @@ Contributions are welcome!
 ## 📜 License
 
 MIT License © 2025 \[Your Name / Organization]
-

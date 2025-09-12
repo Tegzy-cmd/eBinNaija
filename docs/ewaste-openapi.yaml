@@ -56,12 +56,12 @@ paths:
                 role: { type: string, enum: [user, collector, recycler] }
                 phone: { type: string }
       responses:
-        "200":
+        '200':
           description: User registered
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
 
   /auth/login:
     post:
@@ -76,7 +76,7 @@ paths:
                 email: { type: string }
                 password: { type: string }
       responses:
-        "200":
+        '200':
           description: Login success
           content:
             application/json:
@@ -91,12 +91,12 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: User profile
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
 
   /pickups:
     post:
@@ -120,25 +120,25 @@ paths:
                       type: array
                       items: { type: number }
       responses:
-        "200":
+        '200':
           description: Pickup created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pickup"
+                $ref: '#/components/schemas/Pickup'
     get:
       summary: List pickups for user/collector
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of pickups
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Pickup"
+                  $ref: '#/components/schemas/Pickup'
 
   /pickups/{id}:
     patch:
@@ -158,12 +158,12 @@ paths:
               properties:
                 status: { type: string }
       responses:
-        "200":
+        '200':
           description: Updated pickup
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pickup"
+                $ref: '#/components/schemas/Pickup'
 
   /collectors/jobs:
     get:
@@ -171,14 +171,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Nearby jobs
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Pickup"
+                  $ref: '#/components/schemas/Pickup'
 
   /collectors/jobs/{id}/complete:
     patch:
@@ -200,12 +200,12 @@ paths:
                   type: string
                   format: binary
       responses:
-        "200":
+        '200':
           description: Completed pickup
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pickup"
+                $ref: '#/components/schemas/Pickup'
 
   /recycling/deliveries:
     get:
@@ -213,14 +213,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Deliveries
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Pickup"
+                  $ref: '#/components/schemas/Pickup'
 
   /recycling/{id}/process:
     patch:
@@ -233,12 +233,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Processed pickup
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pickup"
+                $ref: '#/components/schemas/Pickup'
 
   /wallet:
     get:
@@ -246,7 +246,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Wallet
           content:
             application/json:
@@ -257,7 +257,7 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Transaction"
+                      $ref: '#/components/schemas/Transaction'
 
   /wallet/redeem:
     post:
@@ -272,7 +272,7 @@ paths:
               properties:
                 amount: { type: number }
       responses:
-        "200":
+        '200':
           description: Redeem success
           content:
             application/json:
@@ -288,7 +288,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Admin overview
           content:
             application/json:

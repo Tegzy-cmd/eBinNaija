@@ -1,14 +1,14 @@
 module.exports = {
   apps: [
     {
-      name: "ewaste-api",
-      script: "./dist/app.js",
-      instances: "max",
-      exec_mode: "cluster",
+      name: 'ewaste-api',
+      script: './dist/app.js',
+      instances: 'max',
+      exec_mode: 'cluster',
       watch: false,
       env: {
-        NODE_ENV: "production"
-      }
-    }
-  ]
+        NODE_ENV: 'production',
+      },
+    },
+  ],
 };

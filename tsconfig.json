@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
-    "moduleResolution": "node",
+    "target": "ES2021",
+    "module": "commonjs",
+    "rootDir": "src",
     "outDir": "dist",
-    "rootDir": ".",
+    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "jest"],
+    "sourceMap": true
   },
-  "ts-node": {
-    "esm": true
-  },"include": [
-    "src"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "tests/**/*.spec.ts"]
 }
