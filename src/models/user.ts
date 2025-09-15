@@ -9,6 +9,7 @@ export interface IUser extends Document {
   phone?: string;
   profileImage?: string;
   walletBalance: number;
+  _id: number;
 }
 
 const userSchema = new Schema<IUser>(
