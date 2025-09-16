@@ -1,9 +1,9 @@
 import Redis from 'ioredis';
 
 const redis = new Redis({
-  host: process.env.REDIS_HOST || '127.0.0.1',
-  port: parseInt(process.env.REDIS_PORT || '6379', 10),
-  password: process.env.REDIS_PASSWORD || undefined,
+  host: process.env.REDIS_HOST || 'redis-13556.c80.us-east-1-2.ec2.redns.redis-cloud.com',
+  port: parseInt(process.env.REDIS_PORT || '13556', 10),
+  password: process.env.REDIS_PASSWORD || 'IYbIUUHYwtO6IcfX8yXNpu3WgWCOaze0',
   enableAutoPipelining: true,
   // keep offline queue off for API safety
   enableOfflineQueue: false,
@@ -33,3 +33,6 @@ redis.on('close', () => console.warn('⚠️ Redis connection closed'));
 redis.on('reconnecting', (delay: number) => console.log(`🔄 Redis reconnecting in ${delay}ms`));
 
 export default redis;
+//  REDIS_HOST =redis-13556.c80.us-east-1-2.ec2.redns.redis-cloud.com
+//  REDIS_PORT = 13556
+//  REDIS_PASSWORD = IYbIUUHYwtO6IcfX8yXNpu3WgWCOaze0

@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import User, { IUser } from '../models/user';
 import redisService from './redis.service';
+import { verificationTemplate, resetPasswordTemplate } from '../utils/emailTemplates';
 import { sendEmail } from '../utils/email';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
@@ -68,7 +69,7 @@ export const sendVerification = async (email: string): Promise<void> => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   await redisService.setValue(`verify:${email}`, otp, 600);
 
-  await sendEmail(email, 'Verify your eWaste account', `Your OTP is ${otp}`);
+  await sendEmail(email, 'Verify your eWaste account', verificationTemplate(otp));
 };
 
 /**
@@ -93,7 +94,7 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
   await redisService.setValue(`reset:${token}`, user._id.toString(), 3600);
 
   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
-  await sendEmail(email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
+  await sendEmail(email, 'Password Reset', resetPasswordTemplate(resetLink));
 };
 
 /**
