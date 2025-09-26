@@ -1,22 +1,18 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.titan.email',
-  port: 465,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: true, // set secure true if port is 465
   auth: {
-    user: 'support@bitminersfx.com',
-    pass: 'Benjamin007$',
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
   },
   tls: {
     rejectUnauthorized: false, // allow self-signed certificates
   },
 });
 
-// SMTP_HOST=smtp.titan.email
-// SMTP_PORT=465
-// SMTP_USER=support@bitminersfx.com
-// SMTP_PASSWORD=Benjamin007$
 
 export const sendEmail = async (to: string, subject: string, text: string, html?: string) => {
   await transporter.sendMail({
