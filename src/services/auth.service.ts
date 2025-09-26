@@ -67,17 +67,24 @@ export const sendVerification = async (email: string): Promise<void> => {
   if (user.verified) return;
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  await redisService.setValue(`verify:${email}`, otp, 600);
+  try {
+    await redisService.setValue(`verify:${email}`, otp, 600);
 
-  await sendEmail(email, 'Verify your eWaste account', verificationTemplate(otp));
+    await sendEmail(email, 'Verify your eWaste account', verificationTemplate(otp));
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+  }
 };
 
 /**
  * Verify email with OTP
  */
 export const verifyEmail = async (email: string, otp: string): Promise<void> => {
-  const storedOtp = await redisService.getValue<string>(`verify:${email}`);
-  if (!storedOtp || storedOtp !== otp) throw new Error('Invalid or expired OTP');
+  const storedOtp = Number(await redisService.getValue<string>(`verify:${email}`));
+
+  if (!storedOtp || storedOtp !== Number(otp)){
+    throw new Error('Invalid or expired OTP');
+  } 
 
   await User.updateOne({ email: email.toLowerCase() }, { verified: true });
   await redisService.deleteKey(`verify:${email}`);

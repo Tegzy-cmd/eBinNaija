@@ -85,7 +85,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 export const me = async (req: Request, res: Response) => {
   try {
     // @ts-expect-error: userId injected by auth middleware
-    const userId = req.userId;
+    const userId = req.user.id;
     const user = await authService.me(userId);
     res.status(200).json({ success: true, data: user });
   } catch (error: any) {

@@ -1,7 +1,7 @@
-import redis from "../config/redis";
+import redis from '../config/redis';
 
 class RedisService {
-  private prefix = process.env.REDIS_PREFIX || "app"; // namespace
+  private prefix = process.env.REDIS_PREFIX || 'app'; // namespace
 
   private withPrefix(key: string): string {
     return `${this.prefix}:${key}`;
@@ -9,11 +9,11 @@ class RedisService {
 
   async setValue(key: string, value: unknown, ttl?: number): Promise<void> {
     const namespacedKey = this.withPrefix(key);
-    const data = typeof value === "string" ? value : JSON.stringify(value);
+    const data = typeof value === 'string' ? value : JSON.stringify(value);
 
     try {
       if (ttl) {
-        await redis.set(namespacedKey, data, "EX", ttl);
+        await redis.set(namespacedKey, data, 'EX', ttl);
       } else {
         await redis.set(namespacedKey, data);
       }
@@ -107,11 +107,7 @@ class RedisService {
    * @param fetcher Function to fetch data if not in cache
    * @param ttl Time-to-live in seconds (default: 1 hour)
    */
-  async getOrSet<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttl: number = 3600
-  ): Promise<T> {
+  async getOrSet<T>(key: string, fetcher: () => Promise<T>, ttl: number = 3600): Promise<T> {
     const cached = await this.getValue<T>(key);
     if (cached) return cached;
 
@@ -122,4 +118,3 @@ class RedisService {
 }
 
 export default new RedisService();
-
