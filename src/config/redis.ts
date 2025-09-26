@@ -33,4 +33,3 @@ redis.on('close', () => console.warn('⚠️ Redis connection closed'));
 redis.on('reconnecting', (delay: number) => console.log(`🔄 Redis reconnecting in ${delay}ms`));
 
 export default redis;
-

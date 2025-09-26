@@ -82,9 +82,9 @@ export const sendVerification = async (email: string): Promise<void> => {
 export const verifyEmail = async (email: string, otp: string): Promise<void> => {
   const storedOtp = Number(await redisService.getValue<string>(`verify:${email}`));
 
-  if (!storedOtp || storedOtp !== Number(otp)){
+  if (!storedOtp || storedOtp !== Number(otp)) {
     throw new Error('Invalid or expired OTP');
-  } 
+  }
 
   await User.updateOne({ email: email.toLowerCase() }, { verified: true });
   await redisService.deleteKey(`verify:${email}`);

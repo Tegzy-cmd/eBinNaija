@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 export const sendEmail = async (to: string, subject: string, text: string, html?: string) => {
   await transporter.sendMail({
     from: `support@bitminersfx.com`,
