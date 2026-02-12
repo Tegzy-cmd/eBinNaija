@@ -1,0 +1,265 @@
+eWaste Management Platform – Product Requirements Document (PRD)
+1. Overview
+
+The eWaste Management Platform is designed to streamline the process of collecting, recycling, and tracking electronic waste (eWaste). The system allows users to sign up, verify their email, request a waste pickup, and track the recycling process. Admins will have a dashboard to manage waste collection, view analytics, and generate reports.
+
+2. Tech Stack
+
+Node.js + Express : Backend server and routing.
+
+TypeScript : Static type-checking for improved code reliability.
+
+MongoDB (Mongoose): Database for persistent data storage.
+
+Redis : For caching and OTP management.
+
+JWT Authentication : To handle user authentication securely.
+
+Zod Validation : To validate incoming data for API requests.
+
+3. Roles
+
+User : Any individual who registers to request eWaste collection.
+
+Can register, verify their email, reset passwords, and schedule a pickup.
+
+Can track the status of their pickup and recycling.
+
+Admin : A platform administrator who manages operations, including waste pickup, recycling tracking, and viewing analytics.
+
+Can view all user data and requests.
+
+Can schedule, approve, and track waste collection.
+
+Can generate analytics and reports.
+
+4. User Flows
+4.1. User Registration Flow
+
+User visits the registration page.
+
+User provides email, password, and other required details.
+
+System sends an OTP to the provided email for verification.
+
+User enters OTP to verify their email.
+
+Upon successful verification, the user is redirected to the dashboard or pickup request page.
+
+If the user's email is already registered, the system informs them and offers login functionality.
+
+4.2. Authentication Flow
+
+User enters credentials (email and password).
+
+System checks the credentials against the database.
+
+If successful, the system returns a JWT token.
+
+The user uses the token for authentication on subsequent requests.
+
+4.3. Pickup Request Flow
+
+User logs in and navigates to the pickup request page.
+
+User selects the type and quantity of eWaste to be picked up.
+
+User provides a pickup address and preferred date/time.
+
+The request is sent to the admin for scheduling.
+
+The user receives an email confirmation with the scheduled pickup details.
+
+User can track the status of the pickup through their dashboard.
+
+4.4. Admin Dashboard Flow
+
+Admin logs into the system.
+
+Admin views a list of pending, in-progress, and completed pickups.
+
+Admin can approve/reject pickup requests.
+
+Admin can schedule waste pickups and manage user data.
+
+Admin can generate reports (eg, number of pickups, types of waste collected, recycling rates).
+
+5. API Contracts
+5.1. Authentication API
+
+POST /api/auth/register
+
+Description : Registers a new user and sends an email verification OTP.
+
+Request Body :
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+
+Response :
+
+{
+  "message": "Registration successful. Check your email for OTP."
+}
+
+
+POST /api/auth/login
+
+Description : Logs in a user and returns a JWT token.
+
+Request Body :
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+
+Response :
+
+{
+  "token": "jwt-token"
+}
+
+
+POST /api/auth/verify-otp
+
+Description : Verifies the OTP sent to the user's email during registration.
+
+Request Body :
+
+{
+  "email": "user@example.com",
+  "otp": "123456"
+}
+
+
+Response :
+
+{
+  "message": "Email verified successfully."
+}
+
+
+POST /api/auth/logout
+
+Description : Logs out the user by blacklisting their JWT token.
+
+Request Body :
+
+{
+  "token": "jwt-token"
+}
+
+
+Response :
+
+{
+  "message": "Successfully logged out."
+}
+
+5.2. Pickup Request API
+
+POST /api/pickups/request
+
+Description : Allows a user to request a waste pickup.
+
+Request Body :
+
+{
+  "userId": "user-id",
+  "wasteType": "e-waste",
+  "quantity": 2,
+  "pickupAddress": "123 Main St",
+  "pickupDate": "2026-03-01T10:00:00Z"
+}
+
+
+Response :
+
+{
+  "message": "Pickup request successfully created. An admin will confirm the schedule."
+}
+
+
+GET /api/pickups/status
+
+Description : Returns the current status of a user's pickup request.
+
+Response :
+
+{
+  "status": "pending",
+  "scheduledDate": "2026-03-01T10:00:00Z"
+}
+
+5.3. Admin API
+
+GET /api/admin/pickups
+
+Description : Fetches all pending, in-progress, and completed pickup requests.
+
+Response :
+
+[
+  {
+    "userId": "user-id",
+    "wasteType": "e-waste",
+    "quantity": 2,
+    "pickupAddress": "123 Main St",
+    "status": "pending"
+  },
+  {
+    "userId": "user-id",
+    "wasteType": "batteries",
+    "quantity": 1,
+    "pickupAddress": "456 Oak St",
+    "status": "in-progress"
+  }
+]
+
+
+POST /api/admin/pickups/schedule
+
+Description : Schedules a pickup for a pending request.
+
+Request Body :
+
+{
+  "pickupId": "pickup-id",
+  "scheduledDate": "2026-03-01T10:00:00Z"
+}
+
+
+Response :
+
+{
+  "message": "Pickup scheduled successfully."
+}
+
+6. Environment Variables
+
+JWT_SECRET: Secret key used to sign JWT tokens.
+
+MONGO_URI: URI to the MongoDB database.
+
+REDIS_HOST: Redis instance hostname.
+
+REDIS_PORT: Redis instance port.
+
+REDIS_PASSWORDRedis password.
+
+FRONTEND_URL: The URL of the frontend application.
+
+7. Future Enhancements
+
+AI-based Waste Classification : Utilize machine learning to automatically classify waste types.
+
+Analytics Dashboard : Admin dashboard to generate detailed reports and analytics.
+
+Pickup Scheduling by Users : Allow users to schedule and reschedule waste pickups.
+
+Push Notifications : Notifications to users about pickup status and recycling progress.

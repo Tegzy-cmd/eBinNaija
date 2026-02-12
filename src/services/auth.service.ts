@@ -6,7 +6,7 @@ import redisService from './redis.service';
 import { verificationTemplate, resetPasswordTemplate } from '../utils/emailTemplates';
 import { sendEmail } from '../utils/email';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+const JWT_SECRET = process.env.JWT_SECRET + ""; // Use a strong secret in production
 
 /**
  * Register a new user
@@ -52,10 +52,11 @@ export const login = async ({
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid credentials');
+  const isVerified = user.verified;
+  if (!isVerified) throw new Error('Email not verified');
 
   return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-    expiresIn: '7d',
-  });
+    expiresIn: '7d'});
 };
 
 /**

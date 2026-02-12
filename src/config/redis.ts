@@ -1,12 +1,11 @@
 import Redis from 'ioredis';
 
 const redis = new Redis({
-  // host: process.env.REDIS_HOST || '',
-  // port: parseInt(process.env.REDIS_PORT || '', 10),
-  // password: process.env.REDIS_PASSWORD || '',
-  // enableAutoPipelining: true,
-  // // keep offline queue off for API safety
-  // enableOfflineQueue: false,
+  host: "redis-16839.c341.af-south-1-1.ec2.cloud.redislabs.com",  // Default to localhost if not set
+  port: 16839, // Default to port 6379 if not set
+  password: "SjIcjY0zI6SU6jYXtCexotpL8I4QZ9lt",
+  enableAutoPipelining: true,
+  enableOfflineQueue: false,
   reconnectOnError: (err) => {
     const targetErrors = ['READONLY', 'ECONNRESET'];
     if (targetErrors.some((msg) => err.message.includes(msg))) {
