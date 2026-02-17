@@ -8,7 +8,7 @@ export interface IUser extends Document {
   verified: boolean;
   phone?: string;
   profileImage?: string;
-  walletBalance: number;
+  walletId: string;
   _id: number;
 }
 
@@ -21,7 +21,7 @@ const userSchema = new Schema<IUser>(
     role: { type: String, enum: ['user', 'collector', 'recycler', 'admin'], default: 'user' },
     phone: String,
     profileImage: String,
-    walletBalance: { type: Number, default: 0 },
+    walletId: { type: String, required: true },
   },
   { timestamps: true }
 );
