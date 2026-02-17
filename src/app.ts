@@ -5,8 +5,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { connectDB } from './config/db';
 import redis from './config/redis';
-import authRoutes from './routes/auth';
-// import pickupRoutes from "./routes/pickups";
+import authRoutes from './routes/auth.route';
+import pickupRoutes from './routes/pickup.route';
 
 dotenv.config();
 const app = express();
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/v1/auth', authRoutes);
-// app.use("/api/v1/pickups", pickupRoutes);
+app.use('/api/v1/pickups', pickupRoutes);
 
 app.get('/', (_, res) => res.send('🌍 eWaste API Running...'));
 
